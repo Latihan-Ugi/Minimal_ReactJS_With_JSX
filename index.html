@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
     <script type="text/babel">
     //   var Test= React.createClass({
     //     render: function() {
@@ -23,13 +24,46 @@
             constructor(props){
                 super(props);
                 this.state = {
-                    id:3
+                    id:3,
+                    news:[]
                 }
             }
+
+            componentDidMount(){
+                this.getData();
+            }
+
+            handleText = (event) => {
+                this.setState({
+                    id:event.target.value
+                })
+            }
+
+            getData() {
+                axios.get('https://api.swastiningsih.id/api/news/select?news_status=0&limit=10&offset=0&order_by=desc')
+                .then(res => res.data)
+                .then(data => 
+                    this.setState({
+                        news:data.value 
+                    })
+                )
+                .catch(error => console.log(error))
+            }
+
             render(){
                 return(
-                    this.state.id
-                )
+                    <div>
+                        {/* <input type="text" value={this.state.id} ref="id" onChange={this.handleText}/>
+                        {this.state.id} */}
+                        {
+                            this.state.news.map((value,i) =>
+                                <div key={i}>
+                                    <h2>{value.judul_news}</h2>
+                                </div>
+                            ) 
+                        }
+                    </div>
+                );
             }
         }
       ReactDOM.render(
