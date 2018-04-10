@@ -1,6 +1,35 @@
 <html lang="en">
   <head>
     <title>Test Minimal React JS</title>
+    <link rel="stylesheet" href="themes/blue/pace-theme-center-simple.css" />
+
+  <script src="pace.js"></script>
+  <script>
+    paceOptions = {
+      elements: true
+    };
+    function load(time){
+      var x = new XMLHttpRequest()
+      x.open('GET', "https://api.swastiningsih.id/api/news/select?news_status=0&limit=10&offset=0&order_by=desc" + time, true);
+      x.send();
+    };
+
+    load(20);
+    load(100);
+    load(500);
+    load(2000);
+    load(3000);
+
+    setTimeout(function(){
+      Pace.ignore(function(){
+        load(3100);
+      });
+    }, 4000);
+
+    Pace.on('hide', function(){
+      console.log('done');
+    });
+  </script>
   </head>
   <body>
     <div id="test"></div>
@@ -12,6 +41,16 @@
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script> -->
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
+  <script>
+    range.addEventListener('input', function(){
+      document.querySelector('.pace').classList.remove('pace-inactive');
+      document.querySelector('.pace').classList.add('pace-active');
+
+      document.querySelector('.pace-progress').setAttribute('data-progress-text', range.value + '%');
+      document.querySelector('.pace-progress').setAttribute('style', '-webkit-transform: translate3d(' + range.value + '%, 0px, 0px)');
+    });
+  </script>
     <script type="text/babel">
     //   var Test= React.createClass({
     //     render: function() {
@@ -20,18 +59,36 @@
     //       )
     //     }
     //   });
+
         class Test extends React.Component {
             constructor(props){
                 super(props);
                 this.state = {
                     id:3,
                     news:[],
-                    loading:false
+                    loading:false,
+                    willmount:true,
+                    didmount:false
                 }
+            }
+
+            componentWillMount() {
+                console.log("hallo")
+                this.setState({
+                    willmount:true,
+                    didmount:false,
+                })
             }
 
             componentDidMount(){
                 this.getData();
+                console.log("hallo1")
+                setTimeout(() => {
+                    this.setState({
+                        didmount:true,
+                        willmount:false
+                    })
+                }, 1000)
             }
 
             handleText = (event) => {
@@ -56,6 +113,17 @@
             }
 
             render(){
+                if(this.state.willmount){
+                    return(
+                        <div>will</div>
+                    )
+                } 
+                
+                if(this.state.didmount){
+                    return(
+                        <div>did</div>
+                    )
+                }
                 return(
                     <div>
                         {/* <input type="text" value={this.state.id} ref="id" onChange={this.handleText}/>
